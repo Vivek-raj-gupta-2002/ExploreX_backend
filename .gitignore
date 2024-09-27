@@ -1,0 +1,67 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+*.log
+*.pot
+*.mo
+*.pid
+*.swp
+*~
+
+# Django
+*.sqlite3
+db.sqlite3
+*.db
+*.json
+*.pyo
+*.pyd
+__pycache__/
+*.pkl
+
+# Migrations
+*/migrations/*
+
+# Static and Media files
+staticfiles/
+media/
+
+# Virtual environments
+venv/
+env/
+.venv/
+bin/
+lib/
+Include/
+Scripts/
+pyvenv.cfg
+
+# Environment variables
+*.env
+.env
+
+# Django extensions
+celerybeat-schedule
+*.pem
+instance/
+config/settings/local.py
+config/settings/.env
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# macOS
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Testing
+.coverage
+.tox/
+.nox/
