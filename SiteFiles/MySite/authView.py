@@ -31,10 +31,13 @@ class GoogleAuthView(APIView):
             # print("Verified token info:", idinfo)
 
             # Extract user details from the verified token
+            
+
             email = idinfo.get('email')
             first_name = idinfo.get('given_name', '')
             last_name = idinfo.get('family_name', '')
-
+            picture = idinfo.get('picture')
+            
             # Find or create the user in the database
             user, created = User.objects.get_or_create(
                 username=email,
@@ -42,6 +45,7 @@ class GoogleAuthView(APIView):
                     'email': email,
                     'first_name': first_name,
                     'last_name': last_name,
+                    'profile_pic': picture
                 }
             )
 
@@ -58,6 +62,7 @@ class GoogleAuthView(APIView):
                     'email': user.email,
                     'first_name': user.first_name,
                     'last_name': user.last_name,
+                    'profile_pic': picture
                 }
             })
 
