@@ -53,6 +53,9 @@ class GoogleAuthView(APIView):
             access_token = str(refresh.access_token)
 
             # Return the JWT tokens and user information in the response
+            
+            profile = ""
+
             return Response({
                 'access': access_token,
                 'refresh': str(refresh),
@@ -61,7 +64,7 @@ class GoogleAuthView(APIView):
                     'email': user.email,
                     'first_name': user.first_name,
                     'last_name': user.last_name,
-                    'profile_pic': picture
+                    'profile_pic': picture,
                 }
             })
 

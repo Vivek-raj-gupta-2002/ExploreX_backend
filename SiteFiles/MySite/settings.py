@@ -45,6 +45,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
+
+    # Our Applications
+    'apiApp'
 ]
 
 MIDDLEWARE = [
