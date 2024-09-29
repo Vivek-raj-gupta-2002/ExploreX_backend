@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 
 class UserProfile(models.Model):
-    # Ensure the relationship is one-to-one, so each user has only one profile.
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -10,6 +9,7 @@ class UserProfile(models.Model):
     )
     
     bio = models.TextField(blank=True, null=True)
+    dob = models.DateField(blank=True, null=True)  # Add Date of Birth (DOB)
 
     # 5 good habits
     good_habit_1 = models.CharField(max_length=100, blank=True, null=True)

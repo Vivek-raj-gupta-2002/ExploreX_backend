@@ -6,11 +6,13 @@ from .models import UserProfile
 from .serializers import UserProfileSerializer
 from django.contrib.auth.models import User  # Assuming you're using Django's User model
 
+
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
     email = request.query_params.get('email')  # Get the email from query parameters
-
     try:
         user = User.objects.get(email=email)  # Fetch user by email
         user_profile = UserProfile.objects.get(user=user)  # Fetch user profile
@@ -30,10 +32,11 @@ def create_or_update_profile(request):
     email = request.data.get('email')  # Get the email from the request
 
     try:
+        # print(type(request.data['inputData']))
         # Check if the user already exists
         user = User.objects.get(email=email)
         user_profile, created = UserProfile.objects.get_or_create(user=user)
-        serializer = UserProfileSerializer(user_profile, data=request.data)
+        serializer = UserProfileSerializer(user_profile, data=request.data['inputData'])
 
         if serializer.is_valid():
             serializer.save()
