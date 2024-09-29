@@ -1,11 +1,13 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from .models import UserProfile
 from .serializers import UserProfileSerializer
 from django.contrib.auth.models import User  # Assuming you're using Django's User model
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_user_profile(request):
     email = request.query_params.get('email')  # Get the email from query parameters
 
@@ -13,8 +15,6 @@ def get_user_profile(request):
         user = User.objects.get(email=email)  # Fetch user by email
         user_profile = UserProfile.objects.get(user=user)  # Fetch user profile
         serializer = UserProfileSerializer(user_profile)  # Serialize user profile
-        
-        print(serializer)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -25,9 +25,9 @@ def get_user_profile(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_or_update_profile(request):
     email = request.data.get('email')  # Get the email from the request
-    # print(email)
 
     try:
         # Check if the user already exists
