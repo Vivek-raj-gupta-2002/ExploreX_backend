@@ -21,5 +21,6 @@ from .authView import GoogleAuthView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/google-login/', GoogleAuthView.as_view(), name='google-auth'),
-    path('api/', include('apiApp.urls'))
+    path('api/', include('apiApp.urls')),
+    path('chats/', include('chatApp.urls')),
 ]

@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,10 +47,21 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
+    'channels',
 
     # Our Applications
-    'apiApp'
+    'apiApp', 
+    'chatApp',
 ]
+
+ASGI_APPLICATION = "MySite.asgi.application"
+
+
+CHANNEL_LAYERS = {
+'default': {
+    'BACKEND': "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
