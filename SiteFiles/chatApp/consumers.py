@@ -73,7 +73,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
-            'sender': sender
+            'sender': sender,
         }))
 
     @sync_to_async
@@ -92,8 +92,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """
         jwt_authenticator = JWTAuthentication()
         try:
-            print(token)
-            # Decode the token
             validated_token = jwt_authenticator.get_validated_token(token)
             # Get the user from the token
             return jwt_authenticator.get_user(validated_token)
