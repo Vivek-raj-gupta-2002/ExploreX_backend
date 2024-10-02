@@ -1,14 +1,15 @@
 import json
+import openai
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import User
-from chatApp.models import Chat, Message  # Import the Chat and Message models
+from chatApp.models import Chat, Message, AIMessages
 from asgiref.sync import sync_to_async
-from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
-User = get_user_model()
+# Set OpenAI API key
+openai.api_key = settings.OPENAI_API_KEY
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -21,41 +22,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
 
-        # Set the authenticated user in the scope
         self.scope['user'] = user
+        self.chat_id = self.scope['url_route']['kwargs']['room_name']
 
-        # Retrieve chat_id from URL parameters
-        self.chat_id = self.scope['url_route']['kwargs']['room_name']  
+        # Generate unique AI chat room ID
+        if "AI" in self.chat_id:
+            self.chat_id = await self.generate_user_ai_room_id(user)
+        
         self.chat_group_name = f'chat_{self.chat_id}'
 
         # Add user to the chat group
-        await self.channel_layer.group_add(
-            self.chat_group_name,
-            self.channel_name
-        )
-
+        await self.channel_layer.group_add(self.chat_group_name, self.channel_name)
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Check if chat_group_name is defined
         if hasattr(self, 'chat_group_name'):
-            # Remove user from the chat group if the group name exists
-            await self.channel_layer.group_discard(
-                self.chat_group_name,
-                self.channel_name
-            )
-
+            await self.channel_layer.group_discard(self.chat_group_name, self.channel_name)
 
     async def receive(self, text_data):
-        # Load incoming message data
         data = json.loads(text_data)
-        message_content = data.get('message')  # Use .get() for safety
-        sender_username = self.scope['user'].username  # Ensure the user is authenticated
-        
-        # Save message to the database
-        await self.save_message(sender_username, message_content)
+        message_content = data.get('message')
+        sender_username = self.scope['user'].username
 
-        # Broadcast message to the group
         await self.channel_layer.group_send(
             self.chat_group_name,
             {
@@ -65,12 +53,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        # Save AI message and reply
+        if self.chat_id.startswith("AI_"):
+            reply = await self.call_chatgpt(message_content)
+            await self.channel_layer.group_send(
+                self.chat_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': reply,
+                    'sender': 'AI'
+                }
+            )
+            await self.save_ai_message(sender_username, message_content, reply)
+        else:
+            await self.save_message(sender_username, message_content)
+
     async def chat_message(self, event):
-        # Extract the message and sender from the event
         message = event['message']
         sender = event['sender']
 
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'sender': sender,
@@ -78,23 +79,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def save_message(self, sender_username, message_content):
-        # Get the sender user object
         sender = User.objects.get(username=sender_username)
-        # Get the Chat instance
         chat = Chat.objects.get(id=self.chat_id)
-        # Save the message
         Message.objects.create(chat=chat, sender=sender, content=message_content)
 
     @sync_to_async
     def authenticate_token(self, token):
-        """
-        Authenticate the JWT token and return the user if valid.
-        """
         jwt_authenticator = JWTAuthentication()
         try:
             validated_token = jwt_authenticator.get_validated_token(token)
-            # Get the user from the token
             return jwt_authenticator.get_user(validated_token)
-        except (InvalidToken, TokenError) as e:
-            print(f"Token authentication failed: {str(e)}")
+        except (InvalidToken, TokenError):
             return None
+
+    @sync_to_async
+    def save_ai_message(self, sender_username, message_content, reply):
+        sender = User.objects.get(username=sender_username)
+        AIMessages.objects.create(user=sender, message=message_content, reply=reply)
+
+    @sync_to_async
+    def call_chatgpt(self, prompt):
+        """Call the OpenAI API to get a response from ChatGPT."""
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=1000,
+            )
+            return response['choices'][0]['message']['content']
+        except Exception as e:
+            print(f'Error calling OpenAI API: {str(e)}')
+            return "Sorry, I couldn't process that."
+
+    @sync_to_async
+    def generate_user_ai_room_id(self, user):
+        """Generate a unique AI room ID using the user's unique identifier."""
+        user = User.objects.get(email=user)
+        return f"AI_{user.id}"
