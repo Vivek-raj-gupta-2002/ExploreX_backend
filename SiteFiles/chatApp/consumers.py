@@ -1,5 +1,5 @@
 import json
-from openai import AsyncOpenAI
+from openai import AzureOpenAI
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import User
 from chatApp.models import Chat, Message, AIMessages
@@ -31,8 +31,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.scope['user'] = self.user
         self.chat_id = self.scope['url_route']['kwargs']['room_name']
 
-        # Create an OpenAI client instance
-        self.client = AsyncOpenAI()
 
         # Base prompt for OpenAI
         self.base_prompt = (
@@ -145,20 +143,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender = User.objects.get(username=sender_username)
         AIMessages.objects.create(user=sender, message=message_content, reply=reply)
 
-    async def call_chatgpt(self, prompt):
+    @sync_to_async
+    def call_chatgpt(self, prompt):
         """
         Calls OpenAI's GPT API to get a response for the provided prompt.
         """
+        # print(settings.OPENAI_API_KEY, type(settings.OPENAI_API_KEY))
         try:
-            response = await self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": self.base_prompt},
-                    {"role": "user", "content": prompt},
-                ],
-                max_tokens=1000,
+            
+            client = AzureOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                api_version=settings.API_VERSION,
+                azure_endpoint=settings.ENDPOINT
             )
-            return response['choices'][0]['message']['content']
+
+            chat_history = self.get_AI_history()
+            history = "\n".join([f"User: {m.message}\nAI: {m.reply}" for m in chat_history])
+            
+            # Create a combined prompt with the history and user input
+            combined_prompt = (
+                f"Basic Prompt: {self.bard_base_prompt}\n"
+                f"History:\n{history}\n"
+                f"New Message: {prompt}"
+            )
+            
+            response = client.completions.create(
+                model=settings.MODEL,
+                prompt=combined_prompt,
+                max_tokens=20,
+                # stream=True,
+            )
+
+            return response.choices[0].text.strip()
         except Exception as e:
             print(f'Error calling OpenAI API: {str(e)}')
             return "Sorry, I couldn't process that."
@@ -189,6 +205,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             
             # Call Bard AI to generate a response
             response = genai.GenerativeModel("gemini-1.5-pro").generate_content(combined_prompt)
+            
+            print(response)
             return response.text
         except Exception as e:
             print(f'Error calling Bard API: {str(e)}')
