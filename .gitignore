@@ -65,3 +65,6 @@ config/settings/.env
 .coverage
 .tox/
 .nox/
+
+mediaFiles
+
