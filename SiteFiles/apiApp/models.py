@@ -1,5 +1,32 @@
 from django.db import models
+import uuid
 from django.conf import settings
+
+def user_directory_path(instance, filename):
+    # Generate a unique alphanumeric identifier using uuid
+    unique_id = uuid.uuid4().hex  # Generates a unique 32-character hex string
+
+    # Get the file extension
+    extension = filename.split('.')[-1]
+
+    # Create a new filename with the unique id and original file extension
+    new_filename = f'{unique_id}.{extension}'
+
+    # File will be uploaded to MEDIA_ROOT/user_<username>/<unique_id>.<extension>
+    return f'user_{instance.user.username}/{new_filename}'
+
+class Post(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    image = models.FileField(upload_to=user_directory_path)  # Use callable here for unique path
+    title = models.CharField(max_length=50)
+    description = models.CharField(max_length=100)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.title} by {self.user.username}'
 
 class Notes(models.Model):
     user = models.ForeignKey(

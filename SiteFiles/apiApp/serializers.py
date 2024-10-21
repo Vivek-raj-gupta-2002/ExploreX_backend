@@ -1,17 +1,27 @@
 from rest_framework import serializers
-from .models import UserProfile, GoodBad, Notes
+from .models import UserProfile, GoodBad, Notes, Post
 
-class NotesSerlizer(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        model = Post
+        fields = ('image', 'title', 'description')
+
+    def create(self, validated_data):
+        user = self.context['user']  # Automatically associate the post with the logged-in user
+        return Post.objects.create(user=user, **validated_data)
+
+class NotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notes
         fields = ('note',)
 
     def create(self, validated_data):
         user = self.context['user']
-        return self.create(user=user, **validated_data)
+        return Notes.objects.create(user=user, **validated_data)
 
-class GoodBadSerlizer(serializers.ModelSerializer):
-    
+class GoodBadSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoodBad
         fields = ('good', 'bad')
@@ -25,8 +35,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['email', 'bio', 'dob', 'good_habit_1', 'good_habit_2', 'good_habit_3', 'good_habit_4', 'good_habit_5',
-                  'bad_habit_1', 'bad_habit_2', 'bad_habit_3', 'bad_habit_4', 'bad_habit_5']
+        fields = ['email', 'bio', 'dob', 'good_habit_1', 'good_habit_2', 'good_habit_3', 
+                  'good_habit_4', 'good_habit_5', 'bad_habit_1', 'bad_habit_2', 
+                  'bad_habit_3', 'bad_habit_4', 'bad_habit_5']
 
     def create(self, validated_data):
         user = self.context['user']  # Get user from context
