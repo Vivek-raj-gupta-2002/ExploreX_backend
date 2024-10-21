@@ -4,10 +4,11 @@ from .models import UserProfile, GoodBad, Notes, Post
 class PostSerializer(serializers.ModelSerializer):
     image = serializers.ImageField()
     username = serializers.CharField(source='user.first_name', read_only=True)
+    user_pic = serializers.URLField(source='user.profile_pic.image', read_only=True)
 
     class Meta:
         model = Post
-        fields = ('image', 'title', 'description', 'username', 'id')
+        fields = ('image', 'title', 'description', 'username', 'id', 'user_pic')
 
     def create(self, validated_data):
         user = self.context['user']  # Automatically associate the post with the logged-in user

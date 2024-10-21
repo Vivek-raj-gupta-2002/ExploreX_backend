@@ -15,6 +15,13 @@ def user_directory_path(instance, filename):
     # File will be uploaded to MEDIA_ROOT/user_<username>/<unique_id>.<extension>
     return f'user_{instance.user.username}/{new_filename}'
 
+class ProfilePic(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_pic')
+    image = models.URLField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user.username)
+
 class Post(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

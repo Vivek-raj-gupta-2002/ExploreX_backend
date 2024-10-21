@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from apiApp import models
 
 User = get_user_model()
 
@@ -48,13 +49,15 @@ class GoogleAuthView(APIView):
                 }
             )
 
+
+
             # Generate JWT tokens for the user
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
             # Return the JWT tokens and user information in the response
             
-            profile = ""
+            models.ProfilePic.objects.update_or_create(user=user, image=picture)
 
             return Response({
                 'access': access_token,
@@ -65,6 +68,7 @@ class GoogleAuthView(APIView):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'profile_pic': picture,
+                    'id': user.id
                 }
             })
 
