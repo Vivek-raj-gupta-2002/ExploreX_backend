@@ -1,6 +1,22 @@
 from django.db import models
 from django.conf import settings
 
+# model for good and bad things of the day
+class GoodBad(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    good = models.CharField(max_length=100)
+    bad = models.CharField(max_length=100)
+    date = models.DateField(auto_created=True)
+
+    def __str__(self):
+        return str(self.date) + " : " + str(self.user.username)
+
+    class Meta:
+        unique_together = ('user', 'date')
+
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

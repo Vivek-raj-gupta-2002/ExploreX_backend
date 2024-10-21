@@ -2,11 +2,49 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import UserProfile
-from .serializers import UserProfileSerializer
+from .models import UserProfile, GoodBad
+from .serializers import UserProfileSerializer, GoodBadSerlizer
 from django.contrib.auth.models import User  # Assuming you're using Django's User model
+from rest_framework import generics, permissions
+from django.utils import timezone
+
+# Create or Update a GoodBad object
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_update_good_bad(request):
+    user = request.user  # Get the current user
+    data = request.data  # Get the data from the request
+    date = timezone.now().date()  # Use today's date
+
+    # Check if a GoodBad object already exists for the user and today's date
+    good_bad_entry, created = GoodBad.objects.get_or_create(user=user, date=date)
+
+    # print(data, user)
+    # Update the GoodBad entry with the new data
+    serializer = GoodBadSerlizer(good_bad_entry, data=data)
+    
+    # print(serializer)
+    if serializer.is_valid():
+        serializer.save()  # Save the updated data
+        return Response(serializer.data, status=status.HTTP_200_OK if not created else status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Retrieve a GoodBad object by date
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_good_bad_by_date(request, date):
+    user = request.user  # Get the current user
+
+    try:
+        # Try to fetch the GoodBad object for the user and the given date
+        good_bad_entry = GoodBad.objects.get(user=user, date=date)
+        serializer = GoodBadSerlizer(good_bad_entry)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except GoodBad.DoesNotExist:
+        return Response({"error": "No entry found for the given date."}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])

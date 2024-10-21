@@ -1,7 +1,15 @@
 from rest_framework import serializers
-from .models import UserProfile
+from .models import UserProfile, GoodBad
 
-{'email': 'vivekrajgupta2002@outlook.com', 'inputData': {'email': 'vivekrajgupta2002@outlook.com', 'bio': 'Vdhd', 'dob': '2024-09-29', 'bad_habit_1': 'Jdjd', 'bad_habit_2': 'Udhd', 'bad_habit_3': 'Jxjx', 'bad_habit_4': 'Udud', 'bad_habit_5': 'Uxux', 'good_habit_1': 'Hxjx', 'good_habit_2': 'Jxjx', 'good_habit_3': 'Hxhx', 'good_habit_4': 'Jdjd', 'good_habit_5': 'Jxjx'}}
+class GoodBadSerlizer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = GoodBad
+        fields = ('good', 'bad', 'date')
+
+    def create(self, validated_data):
+        user = self.context['user']
+        return GoodBad.objects.create(user=user, **validated_data)
 
 class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)

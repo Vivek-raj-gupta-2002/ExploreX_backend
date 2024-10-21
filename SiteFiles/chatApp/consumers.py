@@ -42,6 +42,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.bard_base_prompt = (
             "You are a friendly assistant providing warm, empathetic support "
             "for mental health issues. Respond concisely and clearly with empathy."
+            "Your responce should be just raw answer without Responce tag"
+            "use multiple life related books like Bhagwat gita and all to understand and solve problems of user"
         )
 
         # If the chat room is an AI-generated room, generate the unique AI room ID
@@ -206,7 +208,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Call Bard AI to generate a response
             response = genai.GenerativeModel("gemini-1.5-pro").generate_content(combined_prompt)
             
-            print(response)
             return response.text
         except Exception as e:
             print(f'Error calling Bard API: {str(e)}')
