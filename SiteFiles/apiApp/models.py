@@ -1,9 +1,24 @@
 from django.db import models
 from django.conf import settings
 
+class Notes(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    date = models.DateField(auto_created=True)
+    note = models.TextField()
+
+    def __str__(self):
+        return "Note on '" + str(self.date) + "' by '" + str(self.user.username) + "'"
+
+    class Meta:
+        unique_together = ('user', 'date')
+
+
 # model for good and bad things of the day
 class GoodBad(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )

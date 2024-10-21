@@ -1,11 +1,20 @@
 from rest_framework import serializers
-from .models import UserProfile, GoodBad
+from .models import UserProfile, GoodBad, Notes
+
+class NotesSerlizer(serializers.ModelSerializer):
+    class Meta:
+        model = Notes
+        fields = ('note',)
+
+    def create(self, validated_data):
+        user = self.context['user']
+        return self.create(user=user, **validated_data)
 
 class GoodBadSerlizer(serializers.ModelSerializer):
     
     class Meta:
         model = GoodBad
-        fields = ('good', 'bad', 'date')
+        fields = ('good', 'bad')
 
     def create(self, validated_data):
         user = self.context['user']
