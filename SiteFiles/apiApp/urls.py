@@ -11,5 +11,6 @@ urlpatterns = [
     path('goodbad/<str:date>/', views.get_good_bad_by_date, name='goodbad-detail'),
     path('notes/', views.create_update_notes, name='notes-create'),
     path('notes/<str:date>/', views.get_notes_by_date, name='notes-detail'),
-    path('posts/', views.create_post, name='create_post')
+    path('posts/', views.create_post, name='create_post'),
+    path('get_posts/', views.view_post, name='get_post')
 ]

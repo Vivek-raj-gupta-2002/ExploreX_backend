@@ -7,7 +7,16 @@ from .serializers import UserProfileSerializer, GoodBadSerializer, NotesSerializ
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_post(request):
+    try:
+        data = Post.objects.filter(created_on__date=timezone.now().date()).order_by('-created_on')
+        serializer = PostSerializer(data, many=True)  # Add many=True for multiple objects
+        return Response(serializer.data, status=status.HTTP_200_OK)  # Use .data to access serialized data
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+    
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_post(request):
