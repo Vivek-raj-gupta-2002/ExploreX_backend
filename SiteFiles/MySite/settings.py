@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+# from uttils import summarizer, imageToText
 
 
 
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     # Our Applications
     'apiApp', 
     'chatApp',
+    'AgentApp',
 ]
 
 ASGI_APPLICATION = "MySite.asgi.application"
@@ -164,3 +166,6 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 API_VERSION = os.getenv('API_VERSION')
 ENDPOINT = os.getenv('ENDPOINT')
 MODEL = os.getenv('MODEL')
+
+# SUMMARIZE_MODEL = summarizer.TextSummarizer(cache_dir='uttils/models')
+# IMAGE_MODEL = imageToText.ImageToText(cache_dir='uttils/models')
