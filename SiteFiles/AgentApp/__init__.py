@@ -1,0 +1,1 @@
+from .task import normal_trigger
