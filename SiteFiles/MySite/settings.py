@@ -144,10 +144,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = 'staticFiles'
+STATIC_ROOT = os.path.join(BASE_DIR / 'staticFiles')
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = 'mediaFiles'
+MEDIA_ROOT = os.path.join(BASE_DIR /'mediaFiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -163,6 +163,7 @@ REST_FRAMEWORK = {
 GOOGLE_CLIENT_ID = os.getenv('CLIENT_ID')
 
 BARD_API = os.getenv('GOOGLE_BARD_API')
+
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 API_VERSION = os.getenv('API_VERSION')
@@ -186,3 +187,5 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 # install django-celery-beat
 #celerybeat settings
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+MODELS_PATH = BASE_DIR / 'models'

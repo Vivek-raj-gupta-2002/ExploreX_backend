@@ -1,9 +1,10 @@
 from transformers import TFVisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer, pipeline
 from PIL import Image
 import tensorflow as tf
+from django.conf import settings
 
 class ImageToText:
-    def __init__(self, model_name="nlpconnect/vit-gpt2-image-captioning", max_length=16, num_beams=4, cache_dir='./models'):
+    def __init__(self, model_name="nlpconnect/vit-gpt2-image-captioning", max_length=16, num_beams=4, cache_dir=settings.MODELS_PATH):
         # Load the PyTorch weights into the TensorFlow model
         self.model = TFVisionEncoderDecoderModel.from_pretrained(model_name, cache_dir=cache_dir, from_pt=True)
         self.feature_extractor = ViTImageProcessor.from_pretrained(model_name, cache_dir=cache_dir)

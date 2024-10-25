@@ -20,7 +20,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
 
     'Data_Collection': {
-        'task': 'AgentApp.task.normal_trigger',
+        'task': 'AgentApp.tasks.normal_trigger',
         'schedule': crontab(hour=18, minute=55),
     },
     

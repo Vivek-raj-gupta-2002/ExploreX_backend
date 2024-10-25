@@ -1,1 +1,1 @@
-from .task import normal_trigger
+default_auto_field = 'django.db.models.BigAutoField'

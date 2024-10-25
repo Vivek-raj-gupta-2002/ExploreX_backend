@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/google-login/', GoogleAuthView.as_view(), name='google-auth'),
     path('api/', include('apiApp.urls')),
     path('chats/', include('chatApp.urls')),
+    path('agent/', include('AgentApp.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,5 +2,8 @@ from django.apps import AppConfig
 
 
 class AgentappConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
     name = 'AgentApp'
+
+    def ready(self):
+        from .tasks import normal_trigger, getSummary
+        # getSummary()
