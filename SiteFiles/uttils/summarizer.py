@@ -67,7 +67,7 @@ class TextAnalyzer:
         :param max_input_length: Maximum input text length.
         :return: The summary as a string.
         """
-        prompt = f"Summarize the following text in {word_limit} words:\n\n{text[:max_input_length]}"
+        prompt = f"Summarize the following text in {word_limit} words give the relevent informations and use bulliton points:\n\n{text[:max_input_length]}"
         return self._call_api(prompt)
 
     def analyze_personality(self, text, word_limit=20, max_input_length=2000):
@@ -89,7 +89,7 @@ class TextAnalyzer:
         :param max_input_length: Maximum input text length.
         :return: The mood description as a string.
         """
-        prompt = f"Describe the mood expressed in the following text in {word_limit} words in the form of bullitons:\n\n{text[:max_input_length]}"
+        prompt = f"Describe the mood expressed in the following text in {word_limit} words in the form of bullitons use emoticons and from the days since the user in that mood:\n\n{text[:max_input_length]}"
         return self._call_api(prompt)
 
     def suggest_tasks(self, text, word_limit=25, max_input_length=2000):
@@ -100,7 +100,7 @@ class TextAnalyzer:
         :param max_input_length: Maximum input text length.
         :return: Suggested tasks as a string.
         """
-        prompt = f"Based on the following text, suggest 3-4 tasks the person should focus on {word_limit} words and only give headings of one word and the tasks should be physical or real don't describe them only 4 activity and dont use sub points:\n\n{text[:max_input_length]}"
+        prompt = f"Based on the following text, suggest 3-4 tasks the person should focus on {word_limit} words and only give headings of one word and the tasks should be physical or real don't describe them only 4 activity and dont use sub points the tasks should not be something like soft skills and all:\n\n{text[:max_input_length]}"
         return self._call_api(prompt)
 
     def _call_api(self, prompt):
