@@ -12,6 +12,11 @@ import google.generativeai as genai
 genai.configure(api_key=settings.BARD_API)
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    bard_base_prompt = (
+            "You are a kind, empathetic, and attentive mental health assistant. "
+            "Your role is to offer emotional support and coping strategies to help users."
+        )
+    
     async def connect(self):
         # Authenticate user with JWT token
         token = self.scope['query_string'].decode().split('=')[1]
@@ -60,7 +65,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Process AI response if the chat title indicates an AI chat
         if self.chat_title.startswith("AI_"):
-            reply = await self.generate_ai_reply(message_content)
+            reply = await self.bard_ai(message_content)
             await self.channel_layer.group_send(
                 self.chat_group_name,
                 {
@@ -139,31 +144,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Generate a unique room title for AI chats
         return f"AI_{user.id}"
 
-    async def generate_ai_reply(self, prompt):
-        # Generate AI response for a prompt
+    @sync_to_async
+    def bard_ai(self, prompt):
+        """
+        Calls Bard AI's API to get a response based on the user prompt and chat history.
+        """
         try:
-            response = await sync_to_async(self.generate_bard_response)(prompt)
-            return response
+            # Get chat history for context
+            chat_history = self.get_AI_history()
+            history = "\n".join([f"User: {m.message}\nAI: {m.reply}" for m in chat_history])
+            
+            # Create a combined prompt with the history and user input
+            combined_prompt = (
+                f"Basic Prompt: {self.bard_base_prompt}\n"
+                f"History:\n{history}\n"
+                f"New Message: {prompt}"
+            )
+            
+            # Call Bard AI to generate a response
+            response = genai.GenerativeModel("gemini-1.5-pro").generate_content(combined_prompt)
+            
+            return response.text
+        
         except Exception as e:
             print(f'Error calling Bard API: {str(e)}')
             return "Sorry, I couldn't process that."
 
-    @sync_to_async
-    def generate_bard_response(self, prompt):
-        # Build a prompt with history and generate an AI response
-        chat_history = self.get_ai_history()
-        history = "\n".join([f"User: {m.message}\nAI: {m.reply}" for m in chat_history])
-
-        combined_prompt = (
-            f"Basic Prompt: {self.bard_base_prompt}\n"
-            f"History:\n{history}\n"
-            f"New Message: {prompt}"
-        )
-
-        response = genai.GenerativeModel("gemini-1.5-pro").generate_content(combined_prompt)
-        return response.text
-
-    @sync_to_async
-    def get_ai_history(self):
+    
+    def get_AI_history(self):
         # Retrieve recent AI chat history
         return AIMessages.objects.filter(user=self.user).order_by('-timestamp')[:10]
