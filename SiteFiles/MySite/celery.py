@@ -21,7 +21,7 @@ app.conf.beat_schedule = {
 
     'Data_Collection': {
         'task': 'AgentApp.tasks.normal_trigger',
-        'schedule': crontab(hour=18, minute=55),
+        'schedule': crontab(hour=11, minute=37),
     },
     
 }
