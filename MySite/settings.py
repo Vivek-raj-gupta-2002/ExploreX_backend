@@ -31,8 +31,8 @@ SECRET_KEY = 'django-insecure-yvq3+ih4in@3xetg+1n(4+aei23@a3*%6-4034&go5ajkns+4=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net' , '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ["https://explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net"]
+ALLOWED_HOSTS = ['explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net' , '127.0.0.1', "192.168.29.41"]
+CSRF_TRUSTED_ORIGINS = ["https://explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net", 'http://192.168.29.41']
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
