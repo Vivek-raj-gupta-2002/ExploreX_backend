@@ -26,6 +26,24 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+
+      - name: Create .env file
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
+          echo "DEBUG=${{ secrets.DEBUG }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> .env
+          echo "GOOGLE_BARD_API=${{ secrets.GOOGLE_BARD_API }}" >> .env
+          echo "OPENAI_API_KEY_ORIGINAL=${{ secrets.OPENAI_API_KEY_ORIGINAL }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "API_VERSION=${{ secrets.API_VERSION }}" >> .env
+          echo "ENDPOINT=${{ secrets.ENDPOINT }}" >> .env
+          echo "MODEL=${{ secrets.MODEL }}" >> .env
+
       
       - name: Install dependencies
         run: pip install -r requirements.txt
