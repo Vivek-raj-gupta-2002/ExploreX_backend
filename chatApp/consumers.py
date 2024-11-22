@@ -93,7 +93,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for message in undelivered_messages:
             await self.send(text_data=json.dumps(message))
-            # await self.mark_message_delivered(message)
+            await self.mark_message_delivered(message)
 
     @sync_to_async
     def get_undelivered_messages(self):
