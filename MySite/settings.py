@@ -31,14 +31,15 @@ SECRET_KEY = 'django-insecure-yvq3+ih4in@3xetg+1n(4+aei23@a3*%6-4034&go5ajkns+4=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net' , '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ["https://explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net"]
+ALLOWED_HOSTS = ['explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net' , '127.0.0.1', "192.168.29.41"]
+CSRF_TRUSTED_ORIGINS = ["https://explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net", 'http://192.168.29.41']
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     'daphne',
 
     'django.contrib.admin',
@@ -77,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'MySite.urls'
@@ -148,6 +150,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR / 'staticFiles')
@@ -191,3 +194,48 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
 MODELS_PATH = BASE_DIR / 'models'
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'simple': {
+#             'format': '%(asctime)s - %(levelname)s - %(message)s',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',  # For general Django logs
+#             'propagate': True,
+#         },
+#         'django.request': {
+#             'handlers': ['console'],
+#             'level': 'INFO',  # Logs only HTTP(S) requests
+#             'propagate': False,
+#         },
+#         'django.channels': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',  # Logs WebSocket connections
+#             'propagate': False,
+#         },
+#         # Suppress other logs by setting their level to WARNING or higher
+#         'channels': {
+#             'handlers': ['console'],
+#             'level': 'WARNING',
+#             'propagate': False,
+#         },
+#         'chatApp': {
+#             'handlers': ['console'],
+#             'level': 'WARNING',
+#             'propagate': False,
+#         },
+#     },
+# }
