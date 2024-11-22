@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     'AgentApp',
 ]
 
-ASGI_APPLICATION = "MySite.asgi.application"
 
 
 CHANNEL_LAYERS = {
@@ -98,6 +97,8 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = "MySite.asgi.application"
 
 WSGI_APPLICATION = 'MySite.wsgi.application'
 
