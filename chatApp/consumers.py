@@ -93,7 +93,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for message in undelivered_messages:
             await self.send(text_data=json.dumps(message))
-            await self.mark_message_delivered(message)
+            
 
     @sync_to_async
     def get_undelivered_messages(self):
@@ -109,8 +109,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for mess in data:
             ans.append({'message': mess.content, 'sender': mess.sender.username,'time': mess.timestamp.strftime('%H:%M:%S')})
-            # mess.status = 'delivered'
-            # mess.save()
+            mess.status = 'delivered'
+            mess.save()
         
         return ans
 
