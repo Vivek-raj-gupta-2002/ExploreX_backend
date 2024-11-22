@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+from datetime import timedelta
 # from uttils import summarizer, imageToText
 
 
@@ -195,6 +196,13 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
 MODELS_PATH = BASE_DIR / 'models'
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # Custom lifetime, e.g., 1 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Custom refresh token lifetime
+}
+
 
 # LOGGING = {
 #     'version': 1,
