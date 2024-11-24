@@ -4,10 +4,11 @@ from .models import Chat, Message
 
 class ChatSerializer(serializers.ModelSerializer):
     last_message = serializers.SerializerMethodField()
+    undelivered_message_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
-        fields = ['title', 'last_message', 'id']
+        fields = ['title', 'last_message', 'id', 'undelivered_message_count']
 
     def get_last_message(self, obj):
         return obj.messages.last().content if obj.messages.exists() else None
