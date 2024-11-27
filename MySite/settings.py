@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-yvq3+ih4in@3xetg+1n(4+aei23@a3*%6-4034&go5ajkns+4='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = False
 
 ALLOWED_HOSTS = ['explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net' , '127.0.0.1', "192.168.29.41", '169.254.129.2', '169.254.129.4']
 CSRF_TRUSTED_ORIGINS = ["https://explorexipsa-fqbpdkapesb0eka6.canadacentral-01.azurewebsites.net", 'http://192.168.29.41', 'https://169.254.129.2/', 'http://169.254.129.2/', 'https://169.254.129.4/', 'http://169.254.129.4/']
