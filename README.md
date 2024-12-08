@@ -1,7 +1,7 @@
 # ExploreX
 ExploreX is a mental health app designed to enhance emotional well-being through AI-driven features and user-focused solutions. The app provides personalized personality analysis, mood tracking, and tailored task suggestions to help users manage their mental health effectively. With an anonymous chat feature, it creates a safe and supportive environment for users to express themselves freely. Built using React Native for a seamless interface, Django and Django REST Framework for a robust backend, and PostgreSQL for efficient data management, ExploreX combines advanced technology with practical utility. The app was tested with real users, showcasing its potential to make a meaningful impact on mental wellness.
 
-
+[ExploreX Frontend](https://github.com/Vivek-raj-gupta-2002/exploreX_Frontend)
 # ExploreX Backend
 
 The backend system for the **ExploreX** application, designed to provide API services, real-time chat features, and data management for user self-awareness and analytics.
