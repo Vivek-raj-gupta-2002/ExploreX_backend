@@ -13,6 +13,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -20,39 +22,15 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
-
-      - name: Create .env file
-        run: |
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
-          echo "DEBUG=${{ secrets.DEBUG }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> .env
-          echo "GOOGLE_BARD_API=${{ secrets.GOOGLE_BARD_API }}" >> .env
-          echo "OPENAI_API_KEY_ORIGINAL=${{ secrets.OPENAI_API_KEY_ORIGINAL }}" >> .env
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
-          echo "API_VERSION=${{ secrets.API_VERSION }}" >> .env
-          echo "ENDPOINT=${{ secrets.ENDPOINT }}" >> .env
-          echo "MODEL=${{ secrets.MODEL }}" >> .env
-
       
       - name: Install dependencies
         run: pip install -r requirements.txt
-
-      - name: collect statics
-        run: python manage.py collectstatic
-
-      - name: collect statics
-        run: python manage.py migrate
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
@@ -75,6 +53,7 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -89,9 +68,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4C568BAD4EBC459FA4F07504698B67F1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0F64ABE873B1474D903DB90C0DBC2061 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_11C94AB0F63041448D932A09287F598F }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0117600DA08D40C59C20EEF6E1AEABA8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_060B73A08FCF46EA93163CD9838C39C9 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_70425FF544A547EB9433B888E7198507 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
