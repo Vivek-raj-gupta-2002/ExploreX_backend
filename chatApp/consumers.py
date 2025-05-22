@@ -17,6 +17,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "You are a kind, empathetic, and attentive mental health assistant. "
             "Your role is to offer emotional support and coping strategies to help users."
         )
+    client = AzureOpenAI(
+                azure_endpoint=settings.ENDPOINT,
+                api_key=settings.OPENAI_API_KEY,
+                api_version=settings.API_VERSION
+            )
+    model = settings.MODEL
     
     async def connect(self):
         # Authenticate user with JWT token
