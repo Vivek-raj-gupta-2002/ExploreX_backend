@@ -7,6 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.conf import settings
 import google.generativeai as genai
+from openai import AzureOpenAI
 
 # Configure Google Generative AI with API key
 genai.configure(api_key=settings.BARD_API)
@@ -150,7 +151,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         Calls Bard AI's API to get a response based on the user prompt and chat history.
         """
         try:
-            # Get chat history for context
             chat_history = self.get_AI_history()
             history = "\n".join([f"User: {m.message}\nAI: {m.reply}" for m in chat_history])
             
@@ -160,15 +160,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 f"History:\n{history}\n"
                 f"New Message: {prompt}"
             )
-            
-            # Call Bard AI to generate a response
-            response = genai.GenerativeModel("gemini-1.5-pro").generate_content(combined_prompt)
-            
-            return response.text
-        
+
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant. && also show positivity in every aspects"},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            return response.choices[0].message.content.strip()
         except Exception as e:
-            print(f'Error calling Bard API: {str(e)}')
+            print(f"Error calling Azure OpenAI API: {str(e)}")
             return "Sorry, I couldn't process that."
+
+
+        # try:
+        #     # Get chat history for context
+        #     chat_history = self.get_AI_history()
+        #     history = "\n".join([f"User: {m.message}\nAI: {m.reply}" for m in chat_history])
+            
+        #     # Create a combined prompt with the history and user input
+        #     combined_prompt = (
+        #         f"Basic Prompt: {self.bard_base_prompt}\n"
+        #         f"History:\n{history}\n"
+        #         f"New Message: {prompt}"
+        #     )
+            
+        #     # Call Bard AI to generate a response
+        #     response = genai.GenerativeModel("gemini-1.5-pro").generate_content(combined_prompt)
+            
+        #     return response.text
+        
+        # except Exception as e:
+        #     print(f'Error calling Bard API: {str(e)}')
+        #     return "Sorry, I couldn't process that."
 
     
     def get_AI_history(self):
