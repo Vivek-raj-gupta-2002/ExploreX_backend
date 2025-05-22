@@ -184,10 +184,10 @@ GOOGLE_CLIENT_ID = os.getenv('CLIENT_ID')
 BARD_API = os.getenv('GOOGLE_BARD_API')
 
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-API_VERSION = os.getenv('API_VERSION')
-ENDPOINT = os.getenv('ENDPOINT')
-MODEL = os.getenv('MODEL')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+API_VERSION = os.getenv('API_VERSION', '')
+ENDPOINT = os.getenv('ENDPOINT', '')
+MODEL = os.getenv('MODEL', '')
 
 
 # celery Configrutions
